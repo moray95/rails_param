@@ -123,17 +123,17 @@ module RailsParam
         case key
           when :required
             raise InvalidParameterError, I18n.t(
-              'required_missing',
+              'blank',
               param_name: param_name,
               default: "Parameter #{param_name} is required",
-              scope: [:rails_param, :empty]
+              scope: [:errors, :messages]
             ) if value && param.nil?
           when :blank
             raise InvalidParameterError, I18n.t(
-              'empty',
+              'blank',
               param_name: param_name,
               default: "Parameter #{param_name} cannot be blank",
-              scope: [:rails_param, :empty]
+              scope: [:errors, :messages]
             ) if !value && case param
                              when String
                                !(/\S/ === param)
@@ -144,33 +144,33 @@ module RailsParam
                            end
           when :format
             raise InvalidParameterError, I18n.t(
-              'format_not_string',
+              'not_a_string',
               param_name: param_name,
               default: "Parameter #{param_name} must be a string if using the format validation",
-              scope: [:rails_param, :format]
+              scope: [:errors, :messages]
             ) unless param.kind_of?(String)
             raise InvalidParameterError, I18n.t(
-              'format_not_matching',
+              'format',
               param_name: param_name,
               value: value,
               default: "Parameter #{param_name} must match format #{value}",
-              scope: [:rails_param, :format]
+              scope: [:errors, :messages]
             ) unless param =~ value
           when :is
             raise InvalidParameterError, I18n.t(
-              'format_not_values',
+              'equal_to',
               param_name: param_name,
-              value: value,
+              count: value,
               default: "Parameter #{param_name} must be #{value}",
-              scope: [:rails_param, :format]
+              scope: [:errors, :messages]
             ) unless param === value
           when :in, :within, :range
             raise InvalidParameterError, I18n.t(
-              'not_in_range',
+              'inclusion',
               param_name: param_name,
               value: value,
               default: "Parameter #{param_name} must be within #{value}",
-              scope: [:rails_param, :value]
+              scope: [:errors, :messages]
             ) unless param.nil? || case value
                                           when Range
                                             value.include?(param)
@@ -179,35 +179,35 @@ module RailsParam
                                         end
           when :min
             raise InvalidParameterError, I18n.t(
-              'not_less_than',
+              'greater_than_or_equal_to',
               param_name: param_name,
-              value: value,
+              count: value,
               default: "Parameter #{param_name} cannot be less than #{value}",
-              scope: [:rails_param, :value]
+              scope: [:errors, :messages]
             ) unless param.nil? || value <= param
           when :max
             raise InvalidParameterError, I18n.t(
-              'not_greater_than',
+              'less_than_or_equal_to',
               param_name: param_name,
-              value: value,
+              count: value,
               default: "Parameter #{param_name} cannot be greater than #{value}",
-              scope: [:rails_param, :value]
+              scope: [:errors, :messages]
             ) unless param.nil? || value >= param
           when :min_length
             raise InvalidParameterError, I18n.t(
               'too_short',
               param_name: param_name,
-              value: value,
+              count: value,
               default: "Parameter #{param_name} cannot have length less than #{value}",
-              scope: [:rails_param, :length]
+              scope: [:errors, :messages]
             ) unless param.nil? || value <= param.length
           when :max_length
             raise InvalidParameterError, I18n.t(
-              'too_big',
+              'too_long',
               param_name: param_name,
-              value: value,
+              count: value,
               default: "Parameter #{param_name} cannot have length greater than #{value}",
-              scope: [:rails_param, :length]
+              scope: [:errors, :messages]
             ) unless param.nil? || value >= param.length
         end
       end
